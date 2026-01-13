@@ -21,20 +21,18 @@ const MainSection = () => {
           at One Place
         </h1>
         <p className="hero-text">
-          Welcome to <span className="brand">CodeKeeper</span>, the ultimate hub
-          for all your bookmarked coding problems!
+          Welcome to <span className="brand">CodeKeeper</span>, Stop scattering
+          your prep across different sites.
           <span className="line-break"></span>
-          Collect and manage your favorite challenges from various coding
-          platforms in one place.
+          Save coding problems, upload your notes, and manage your study
+          resources—all in one distraction-free dashboard.
         </p>
       </header>
 
       {/* --- FEATURES PART --- */}
       <section className="features-section" id="features">
         <div className="section-header">
-          <h2 className="section-title">
-            Features
-          </h2>
+          <h2 className="section-title">Features</h2>
           <p className="section-subtitle">
             Discover the powerful features that make coding practice effortless
           </p>

@@ -56,6 +56,41 @@ export const removeBookmarkFromFolder = (folderId, bookmarkId) =>
   API.delete(`/folders/${folderId}/bookmark/${bookmarkId}`);
 export const updateBookmarkInFolder = (folderId, bookmarkId, data) =>
   API.put(`/folders/${folderId}/bookmark/${bookmarkId}`, data);
+// Add this to your api/api.js file
+
+// 1. Get all resources in a specific folder
+
+
+
+
+export const getResourcesInFolder = (folderId) =>
+  API.get(`/resources/${folderId}/resources`);
+
+export const addResourceToFolder = (folderId, data) =>
+  API.post(`/resources/${folderId}/resource`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+export const removeResourceFromFolder = (folderId, resourceId) =>
+  API.delete(`/resources/${folderId}/resource/${resourceId}`);
+
+export const updateResourceInFolder = (folderId, resourceId, data) =>
+  API.put(`/resources/${folderId}/resource/${resourceId}`, data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 export const getMyProfile = () => API.get("/users/profile");

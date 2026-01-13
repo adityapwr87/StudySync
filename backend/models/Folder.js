@@ -21,6 +21,7 @@ const folderSchema = new mongoose.Schema(
         ref: "Bookmark",
       },
     ],
+    resources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
   },
   { timestamps: true }
 );

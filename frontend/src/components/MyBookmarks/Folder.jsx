@@ -1,145 +1,90 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiArrowLeft, FiPlus } from "react-icons/fi";
-import { toast } from "react-toastify";
+import { FiArrowLeft, FiFolder, FiFileText } from "react-icons/fi";
 import Navbar from "../Dashboard/Navbar/Navbar";
 import Footer from "../Dashboard/Footer/Footer";
-import ProblemCardBookmark from "./ProblemCardBookmark";
-import AddBookmarkModal from "./AddBookmarkModal";
-// ✅ Import Edit Modal
-import EditBookmarkModal from "./EditBookmarkModal";
-
-import {
-  getBookmarksInFolder,
-  removeBookmarkFromFolder,
-  getFolderById,
-} from "../../api/api";
-import "./MyBookmarks.css";
+import { getFolderById } from "../../api/api";
+import ProblemList from "./ProblemList"; // Import the component we just made
+import ResourceList from "./ResourceList"; // You will create this next
 import "./Folder.css";
 
 const Folder = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [bookmarks, setBookmarks] = useState([]);
   const [folder, setFolder] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingFolder, setLoadingFolder] = useState(true);
 
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false); // ✅ Edit Modal State
-  const [editingBookmark, setEditingBookmark] = useState(null); // ✅ Data for editing
+  // STATE: Controls which tab is visible ('problems' or 'resources')
+  const [activeTab, setActiveTab] = useState("problems");
 
-  const [isRemoving, setIsRemoving] = useState(false);
-
+  // Fetch only Folder Metadata (Name/Desc)
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFolderInfo = async () => {
       try {
-        setLoading(true);
-        const { data: folderData } = await getFolderById(id);
-        setFolder(folderData);
-        const { data: bk } = await getBookmarksInFolder(id);
-        setBookmarks(bk);
+        setLoadingFolder(true);
+        const { data } = await getFolderById(id);
+        setFolder(data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch folder info", err);
       } finally {
-        setLoading(false);
+        setLoadingFolder(false);
       }
     };
-    fetchData();
+    fetchFolderInfo();
   }, [id]);
-
-  const handleBookmarkAdded = (newBookmark) => {
-    setBookmarks((prev) => [newBookmark, ...prev]);
-  };
-
-  // ✅ Handle Update Success
-  const handleBookmarkUpdated = (updatedBookmark) => {
-    setBookmarks((prev) =>
-      prev.map((b) => (b._id === updatedBookmark._id ? updatedBookmark : b))
-    );
-  };
-
-  // ✅ Trigger Edit
-  const handleEditClick = (bookmark) => {
-    setEditingBookmark(bookmark);
-    setIsEditOpen(true);
-  };
-
-  const handleRemove = async (bookmarkId) => {
-    if (!window.confirm("Remove bookmark?")) return;
-    try {
-      setIsRemoving(true);
-      await removeBookmarkFromFolder(id, bookmarkId);
-      setBookmarks((prev) => prev.filter((b) => b._id !== bookmarkId));
-      toast.success("Bookmark removed successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to remove bookmark");
-    } finally {
-      setIsRemoving(false);
-    }
-  };
 
   return (
     <div>
       <Navbar />
       <div className="container folder-page">
-        <div className="folder-header">
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            <FiArrowLeft />
+        {/* HEADER SECTION */}
+        {/* HEADER SECTION */}
+        <div className="folder-header mb-6">
+          <button
+            className="back-btn"
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+          >
+            <FiArrowLeft size={22} />
           </button>
-          <div>
-            <h2>{folder?.name || "Folder"}</h2>
+
+          <div className="mt-4">
+            <h2 className="text-2xl font-bold">
+              {loadingFolder ? "Loading..." : folder?.name || "Folder"}
+            </h2>
             <p className="muted">{folder?.description}</p>
-          </div>
-          <div className="header-actions">
-            <button className="btn-gradient" onClick={() => setIsAddOpen(true)}>
-              <FiPlus /> Add Bookmark
-            </button>
           </div>
         </div>
 
-        {loading ? (
-          <p className="loading-text">Loading bookmarks...</p>
-        ) : bookmarks.length === 0 ? (
-          <div className="empty-state">
-            <h3>No bookmarks yet</h3>
-            <p>Add bookmarks using the button above</p>
-          </div>
-        ) : (
-          <div className="bookmarks-list">
-            {bookmarks.map((b) => (
-              <ProblemCardBookmark
-                key={b._id}
-                data={b}
-                onRemove={handleRemove}
-                onEdit={handleEditClick} // ✅ Pass Edit Handler
-                isRemoving={isRemoving}
-              />
-            ))}
-          </div>
-        )}
+        {/* TABS SECTION */}
+        <div className="folder-tabs-container">
+          <button
+            className={`folder-tab ${activeTab === "problems" ? "active" : ""}`}
+            onClick={() => setActiveTab("problems")}
+          >
+            <FiFolder className="tab-icon" />
+            <span>Problems</span>
+          </button>
 
-        {/* Add Modal */}
-        <AddBookmarkModal
-          isOpen={isAddOpen}
-          onClose={() => setIsAddOpen(false)}
-          folderId={id}
-          onBookmarkAdded={handleBookmarkAdded}
-        />
+          <button
+            className={`folder-tab ${
+              activeTab === "resources" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("resources")}
+          >
+            <FiFileText className="tab-icon" />
+            <span>Resources</span>
+          </button>
+        </div>
 
-        {/* ✅ Edit Modal */}
-        {editingBookmark && (
-          <EditBookmarkModal
-            isOpen={isEditOpen}
-            onClose={() => {
-              setIsEditOpen(false);
-              setEditingBookmark(null);
-            }}
-            folderId={id}
-            bookmarkData={editingBookmark}
-            onBookmarkUpdated={handleBookmarkUpdated}
-          />
-        )}
+        {/* CONTENT SECTION */}
+        <div className="folder-content-area mt-6">
+          {activeTab === "problems" ? (
+            <ProblemList folderId={id} />
+          ) : (
+            <ResourceList folderId={id} />
+          )}
+        </div>
       </div>
       <Footer />
     </div>

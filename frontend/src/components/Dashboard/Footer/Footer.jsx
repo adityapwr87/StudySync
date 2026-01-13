@@ -1,5 +1,6 @@
 import React from "react";
-import { FiExternalLink } from "react-icons/fi";
+import { FiExternalLink, FiLayers, FiLink, FiUsers } from "react-icons/fi"; // Added header icons
+import { FaHeart } from "react-icons/fa"; // Added Heart icon
 import {
   SiLeetcode,
   SiCodechef,
@@ -14,26 +15,26 @@ const Footer = () => {
       <div className="footer-grid">
         {/* Resources */}
         <div className="footer-col">
-          <h4 className="footer-heading">📚 Resources</h4>
+          <h4 className="footer-heading">
+            <FiLayers className="heading-icon color-1" /> Resources
+          </h4>
           <ul className="footer-links">
-            <li>Getting Started</li>
-            <li>Documentation</li>
-            <li>Tutorials</li>
-            <li>API Reference</li>
-            <li>Community Forums</li>
+            <li><a href="#">Getting Started</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Tutorials</a></li>
+            <li><a href="#">API Reference</a></li>
+            <li><a href="#">Community Forums</a></li>
           </ul>
         </div>
 
-        {/* Platforms (NOW WITH REAL LINKS) */}
+        {/* Platforms */}
         <div className="footer-col">
-          <h4 className="footer-heading">🔗 Platforms</h4>
+          <h4 className="footer-heading">
+            <FiLink className="heading-icon color-2" /> Platforms
+          </h4>
           <ul className="footer-links">
             <li className="platform-link cf">
-              <a
-                href="https://codeforces.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://codeforces.com/" target="_blank" rel="noreferrer">
                 <SiCodeforces className="brand-icon" /> Codeforces
                 <FiExternalLink className="link-arrow" />
               </a>
@@ -47,11 +48,7 @@ const Footer = () => {
             </li>
 
             <li className="platform-link gfg">
-              <a
-                href="https://www.geeksforgeeks.org/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noreferrer">
                 <SiGeeksforgeeks className="brand-icon" /> Geeks for Geeks
                 <FiExternalLink className="link-arrow" />
               </a>
@@ -65,11 +62,7 @@ const Footer = () => {
             </li>
 
             <li className="platform-link cc">
-              <a
-                href="https://www.codechef.com/"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://www.codechef.com/" target="_blank" rel="noreferrer">
                 <SiCodechef className="brand-icon" /> Codechef
                 <FiExternalLink className="link-arrow" />
               </a>
@@ -79,18 +72,39 @@ const Footer = () => {
 
         {/* Community */}
         <div className="footer-col">
-          <h4 className="footer-heading">👥 Community</h4>
+          <h4 className="footer-heading">
+            <FiUsers className="heading-icon color-3" /> Community
+          </h4>
           <ul className="footer-links">
-            <li>Events</li>
-            <li>Meetups</li>
-            <li>Conferences</li>
-            <li>Hackathons</li>
-            <li>Jobs</li>
+            <li><a href="#">Events</a></li>
+            <li><a href="#">Meetups</a></li>
+            <li><a href="#">Conferences</a></li>
+            <li><a href="#">Hackathons</a></li>
+            <li><a href="#">Jobs</a></li>
           </ul>
         </div>
       </div>
+
+      {/* FOOTER BOTTOM (Matches your Image) */}
       <div className="footer-bottom">
-        <p>© 2025 Zcoder. All rights reserved.</p>
+        <div className="footer-bottom-container">
+          
+          {/* Left: Brand Identity */}
+          <div className="footer-brand-area">
+            <div className="brand-circle">B</div>
+            <div className="brand-text">
+              <span className="brand-name">BookMarker</span>
+              <span className="brand-tagline">Code. Learn. Connect.</span>
+            </div>
+          </div>
+
+          {/* Right: Copyright & Love */}
+          <div className="footer-copyright-area">
+            <p>© 2025 BookMarker. Made with <FaHeart className="heart-icon" /> for developers</p>
+            <span className="copyright-sub">Empowering coders worldwide</span>
+          </div>
+
+        </div>
       </div>
     </footer>
   );

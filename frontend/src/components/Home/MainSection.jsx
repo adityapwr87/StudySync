@@ -18,9 +18,8 @@ const MainSection = () => {
       <header className="hero-section" id="home">
         <div className="hero-icon-badge">💻</div>
         <h1 className="hero-title">
-          All Your Coding <br />
-          <span className="gradient-text">Challenges</span> <br />
-          at One Place
+          Your Personal Library for <br />
+          <span className="gradient-text">Academic Mastery</span> <br />
         </h1>
         <button className="btn-get-started" onClick={() => navigate("/signup")}>
           <span className="emoji">🚀</span>

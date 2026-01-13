@@ -29,10 +29,12 @@ const problemRoutes = require("./routes/problemRoutes");
 const folderRoutes = require("./routes/folderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const resourceRoutes = require("./routes/resourceRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
 // Mount folder-specific routes under /api/problems
 app.use("/api/folders", folderRoutes);
+app.use("/api/resources", resourceRoutes);
 // User-related APIs
 app.use("/api/users", userRoutes);
 // Create HTTP server
