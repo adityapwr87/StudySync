@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiPlus, FiTrash2, FiEdit2, FiArrowLeft, FiX } from "react-icons/fi";
+// Added FiSearch to imports
+import { FiPlus, FiTrash2, FiEdit2, FiArrowLeft, FiX, FiSearch } from "react-icons/fi";
 import Navbar from "../Dashboard/Navbar/Navbar";
 import Footer from "../Dashboard/Footer/Footer";
 import { toast } from "react-toastify";
@@ -16,6 +17,10 @@ const MyBookmarks = () => {
   const navigate = useNavigate();
   const [folders, setFolders] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // New State for Search
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [form, setForm] = useState({ name: "", description: "" });
@@ -34,6 +39,13 @@ const MyBookmarks = () => {
     };
     fetch();
   }, []);
+
+  // --- LOGIC: Filter and Sort Alphabetically ---
+  const filteredFolders = folders
+    .filter((folder) => 
+      folder.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const openCreate = () => {
     setForm({ name: "", description: "" });
@@ -54,7 +66,7 @@ const MyBookmarks = () => {
         pauseOnHover: true,
         draggable: true,
       });
-      navigate(`/mybookmarks`);
+      // navigate(`/mybookmarks`); // Optional: usually stay on page to see result
     } catch (err) {
       console.error(err);
       alert("Create folder failed");
@@ -62,7 +74,7 @@ const MyBookmarks = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("All Bookmarks will be deleted are you sure to Delete folder?")) return;
+    if (!window.confirm("All Bookmarks will be deleted. Are you sure you want to delete this folder?")) return;
     try {
       await deleteFolder(id);
       toast.success("Folder deleted successfully!", {
@@ -93,14 +105,14 @@ const MyBookmarks = () => {
       setFolders((prev) => prev.map((f) => (f._id === data._id ? data : f)));
       setIsRenameOpen(false);
       setEditingFolderId(null);
-     toast.success("Folder Renamed successfully!", {
-       position: "top-right",
-       autoClose: 4000,
-       hideProgressBar: false,
-       closeOnClick: true,
-       pauseOnHover: true,
-       draggable: true,
-     });
+      toast.success("Folder Renamed successfully!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } catch (err) {
       console.error(err);
       alert("Rename failed");
@@ -123,7 +135,20 @@ const MyBookmarks = () => {
               <p>Organize your bookmarks into folders</p>
             </div>
           </div>
+          
           <div className="header-right">
+            {/* SEARCH BAR ADDED HERE */}
+            <div className="search-wrapper">
+              <FiSearch className="search-icon" />
+              <input 
+                type="text" 
+                placeholder="     Search folders..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
+
             <button className="btn-gradient" onClick={openCreate}>
               <FiPlus /> New Folder
             </button>
@@ -133,6 +158,7 @@ const MyBookmarks = () => {
         {loading ? (
           <p className="loading-text">Loading folders...</p>
         ) : folders.length === 0 ? (
+          // State: User has no folders at all
           <div className="empty-state">
             <h3>No folders yet</h3>
             <p>Create a folder to organize your bookmarks</p>
@@ -140,9 +166,19 @@ const MyBookmarks = () => {
               <FiPlus /> Create Folder
             </button>
           </div>
+        ) : filteredFolders.length === 0 ? (
+           // State: User has folders, but search found nothing
+           <div className="empty-state">
+             <h3>No matching folders</h3>
+             <p>Try searching for a different name</p>
+             <button className="btn-text" onClick={() => setSearchQuery("")}>
+               Clear Search
+             </button>
+           </div>
         ) : (
           <div className="folder-grid">
-            {folders.map((f) => (
+            {/* Map over filteredFolders instead of folders */}
+            {filteredFolders.map((f) => (
               <div
                 key={f._id}
                 className="folder-card"
@@ -160,17 +196,16 @@ const MyBookmarks = () => {
                   </div>
                   <div className="folder-actions">
                     <button className="btn-icon" onClick={(e) =>{
-                         e.stopPropagation(); 
-                     openRename(f)}}>
+                          e.stopPropagation(); 
+                      openRename(f)}}>
                       <FiEdit2 />
                     </button>
                     <button
                       className="btn-icon"
-
                       onClick={(e) => {
-                         e.stopPropagation(); 
-                        handleDelete(f._id)
-                      }
+                          e.stopPropagation(); 
+                          handleDelete(f._id)
+                        }
                       }
                     >
                       <FiTrash2 />

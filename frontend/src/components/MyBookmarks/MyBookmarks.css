@@ -335,6 +335,51 @@
   padding: 12px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #888;
+  font-size: 1.2rem;
+}
+
+.search-input {
+  padding: 10px 10px 10px 40px; /* Left padding makes room for icon */
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  width: 250px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #6a11cb; /* Adjust to match your btn-gradient color */
+  box-shadow: 0 0 5px rgba(106, 17, 203, 0.2);
+}
+
+/* Specific styling for the clear search button */
+.btn-text {
+  background: none;
+  border: none;
+  color: #6a11cb;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
 /* Loading Text */
 .loading-text {
   color: #94a3b8;
