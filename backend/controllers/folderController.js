@@ -24,7 +24,6 @@ exports.createFolder = async (req, res) => {
   }
 };
 
-
 exports.getFolders = async (req, res) => {
   try {
     const folders = await Folder.find({ user: req.user.id }).sort({
@@ -38,7 +37,6 @@ exports.getFolders = async (req, res) => {
       .json({ message: "Server Error", error: error.message });
   }
 };
-
 
 exports.getFolderById = async (req, res) => {
   try {
@@ -62,7 +60,6 @@ exports.getFolderById = async (req, res) => {
   }
 };
 
-
 exports.renameFolder = async (req, res) => {
   try {
     const { name } = req.body;
@@ -74,7 +71,7 @@ exports.renameFolder = async (req, res) => {
     const folder = await Folder.findOneAndUpdate(
       { _id: req.params.folderId, user: req.user.id },
       { name },
-      { new: true }
+      { new: true },
     );
 
     if (!folder) {
@@ -88,7 +85,6 @@ exports.renameFolder = async (req, res) => {
       .json({ message: "Server Error", error: error.message });
   }
 };
-
 
 exports.deleteFolder = async (req, res) => {
   try {
@@ -115,7 +111,6 @@ exports.deleteFolder = async (req, res) => {
     });
   }
 };
-
 
 exports.createBookmarkInFolder = async (req, res) => {
   try {
@@ -150,9 +145,16 @@ exports.createBookmarkInFolder = async (req, res) => {
     }
 
     let audioUrl = "";
-    if (req.file) {
-      // Pass folder name "voice-memos" to keep S3 organized
-      audioUrl = await uploadToS3(req.file, "voice-memos");
+    let imageUrl = "";
+    if (req.files) {
+      // audio may be in req.files.audio (array)
+      if (req.files.audio && req.files.audio[0]) {
+        audioUrl = await uploadToS3(req.files.audio[0]);
+      }
+      // image may be in req.files.image (array)
+      if (req.files.image && req.files.image[0]) {
+        imageUrl = await uploadToS3(req.files.image[0]);
+      }
     }
 
     const bookmark = await Bookmark.create({
@@ -163,6 +165,7 @@ exports.createBookmarkInFolder = async (req, res) => {
       tags: parsedTags,
       solution: solution || "",
       audioUrl: audioUrl,
+      imageUrl: imageUrl,
     });
 
     // Add bookmark to folder
@@ -176,7 +179,6 @@ exports.createBookmarkInFolder = async (req, res) => {
       .json({ message: "Server Error", error: error.message });
   }
 };
-
 
 exports.getBookmarksInFolder = async (req, res) => {
   try {
@@ -232,14 +234,17 @@ exports.updateBookmarkInFolder = async (req, res) => {
       }
     }
 
-    // 3. Handle Audio Upload (If a new file is sent)
+    // 3. Handle Audio/Image Uploads (If new files are sent)
     let audioUrl = bookmark.audioUrl; // Default to existing URL
-    if (req.file) {
-      // Upload new file to S3
-      audioUrl = await uploadToS3(req.file, "voice-memos");
+    let imageUrl = bookmark.imageUrl || ""; // Default to existing or empty
+    if (req.files) {
+      if (req.files.audio && req.files.audio[0]) {
+        audioUrl = await uploadToS3(req.files.audio[0]);
+      }
+      if (req.files.image && req.files.image[0]) {
+        imageUrl = await uploadToS3(req.files.image[0]);
+      }
     }
-    // Note: If req.file is undefined, we keep the old audioUrl.
-    // If you want logic to DELETE audio, you'd need a specific flag from frontend.
 
     // 4. Update Fields
     bookmark.title = title || bookmark.title;
@@ -247,6 +252,7 @@ exports.updateBookmarkInFolder = async (req, res) => {
     bookmark.solution = solution || bookmark.solution;
     bookmark.tags = parsedTags;
     bookmark.audioUrl = audioUrl;
+    bookmark.imageUrl = imageUrl;
 
     await bookmark.save();
 
@@ -258,7 +264,6 @@ exports.updateBookmarkInFolder = async (req, res) => {
       .json({ message: "Server Error", error: error.message });
   }
 };
-
 
 exports.removeBookmarkFromFolder = async (req, res) => {
   try {

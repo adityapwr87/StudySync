@@ -31,13 +31,17 @@ const bookmarkSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    imageUrl: {
+      type: String,
+      default: "",
+    },
     folder: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "Folder",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Bookmark", bookmarkSchema);

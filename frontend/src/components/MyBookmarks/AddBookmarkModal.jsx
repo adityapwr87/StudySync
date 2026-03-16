@@ -12,6 +12,7 @@ const AddBookmarkModal = ({ isOpen, onClose, folderId, onBookmarkAdded }) => {
     solution: "",
   });
   const [audioBlob, setAudioBlob] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -32,6 +33,10 @@ const AddBookmarkModal = ({ isOpen, onClose, folderId, onBookmarkAdded }) => {
       formData.append("audio", audioBlob, "voice-note.webm");
     }
 
+    // 3. Append Image if provided
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
     try {
       // 3. API Call
       const { data } = await addBookmarkToFolder(folderId, formData);
@@ -95,6 +100,15 @@ const AddBookmarkModal = ({ isOpen, onClose, folderId, onBookmarkAdded }) => {
           <div className="form-group">
             <label>Voice Logic (Optional)</label>
             <AudioRecorder onAudioStop={setAudioBlob} currentAudioUrl={null} />
+          </div>
+
+          <div className="form-group">
+            <label>Image (optional)</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0] || null)}
+            />
           </div>
 
           <div className="form-group">

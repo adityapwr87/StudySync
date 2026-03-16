@@ -41,6 +41,9 @@ const Navbar = () => {
         <span onClick={() => handleNav("/calendar")} className="nav-item">
           Calendar
         </span>
+        <span onClick={() => handleNav("/mybookmarks")} className="nav-item">
+          MyBookmarks
+        </span>
       </div>
 
       {/* 3. RIGHT: PROFILE & MOBILE TOGGLE */}

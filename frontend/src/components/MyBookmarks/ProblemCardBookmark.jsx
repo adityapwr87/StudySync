@@ -5,10 +5,12 @@ import {
   FiCode,
   FiEdit2,
   FiMic,
+  FiImage,
 } from "react-icons/fi";
 
 const ProblemCardBookmark = ({ data, onRemove, onEdit, isRemoving }) => {
   const [showSolution, setShowSolution] = useState(false);
+  const [showImage, setShowImage] = useState(false);
 
   return (
     <div className="problem-card bookmark-card">
@@ -64,17 +66,32 @@ const ProblemCardBookmark = ({ data, onRemove, onEdit, isRemoving }) => {
         </div>
       )}
 
-      {/* Solution Toggle */}
-      {data.solution && (
-        <div className="card-actions mt-2">
+      {/* Solution + Image Toggles */}
+      <div className="card-actions mt-2">
+        {data.solution && (
           <button
             className={`btn-green ${showSolution ? "active" : ""}`}
-            onClick={() => setShowSolution(!showSolution)}
+            onClick={() => {
+              setShowSolution(!showSolution);
+              setShowImage(false);
+            }}
           >
             <FiCode /> {showSolution ? "Hide Solution" : "Show Solution"}
           </button>
-        </div>
-      )}
+        )}
+
+        {data.imageUrl && (
+          <button
+            className={`btn-green ml-2 ${showImage ? "active" : ""}`}
+            onClick={() => {
+              setShowImage(!showImage);
+              setShowSolution(false);
+            }}
+          >
+            <FiImage /> {showImage ? "Hide Image" : "Show Image"}
+          </button>
+        )}
+      </div>
 
       {/* Solution Block */}
       {showSolution && (
@@ -86,6 +103,23 @@ const ProblemCardBookmark = ({ data, onRemove, onEdit, isRemoving }) => {
           <pre className="code-block">
             <code>{data.solution}</code>
           </pre>
+        </div>
+      )}
+
+      {/* Image Block */}
+      {showImage && data.imageUrl && (
+        <div className="solution-box fade-in">
+          <div className="solution-header">
+            <span className="code-icon">🖼️</span>
+            <div className="solution-title">Image</div>
+          </div>
+          <div className="image-block mt-2">
+            <img
+              src={data.imageUrl}
+              alt={data.title || "bookmark image"}
+              style={{ maxWidth: "100%", borderRadius: 6 }}
+            />
+          </div>
         </div>
       )}
     </div>
