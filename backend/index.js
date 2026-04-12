@@ -17,7 +17,7 @@ app.use(
     origin: [process.env.frontendurl], // Allow your frontend explicitly
     methods: ["GET", "POST", "PUT", "DELETE"], // Allow these methods
     credentials: true, // Allow cookies/headers
-  })
+  }),
 );
 
 // Connect Database
@@ -40,6 +40,10 @@ app.use("/api/users", userRoutes);
 // Create HTTP server
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api/chat-history", chatRoutes);
+// example in Express
+app.get("/health", (req, res) => {
+  res.status(200).send("ok");
+});
 const server = http.createServer(app);
 
 // SOCKET.IO SETUP
@@ -55,7 +59,6 @@ const io = new Server(server, {
 // 🔥 SOCKET EVENTS
 // ===========================
 io.on("connection", (socket) => {
-
   // Join user's personal room
   socket.on("join", ({ userId }) => {
     socket.join(userId);
@@ -70,7 +73,7 @@ io.on("connection", (socket) => {
 
   // Sending a message
   socket.on("send_message", async ({ sender, receiver, content, roomId }) => {
-    if ( !sender || !receiver || !content || !roomId) {
+    if (!sender || !receiver || !content || !roomId) {
       console.warn("Missing required fields in message");
       return;
     }
@@ -117,7 +120,7 @@ io.on("connection", (socket) => {
     try {
       await Message.updateMany(
         { sender: senderId, receiver: receiverId, seen: false },
-        { $set: { seen: true } }
+        { $set: { seen: true } },
       );
 
       io.to(senderId).emit("messages_seen_by_receiver", {
