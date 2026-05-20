@@ -5,7 +5,6 @@ const cors = require("cors");
 const { Server } = require("socket.io");
 const connectDB = require("./config/db");
 
-// Models
 const Message = require("./models/Message");
 const User = require("./models/User");
 
@@ -23,7 +22,6 @@ app.use(
 // Connect Database
 connectDB();
 
-// Import Auth Routes (Day 1)
 const authRoutes = require("./routes/authRoutes");
 const problemRoutes = require("./routes/problemRoutes");
 const folderRoutes = require("./routes/folderRoutes");
@@ -32,21 +30,21 @@ const chatRoutes = require("./routes/chatRoutes");
 const resourceRoutes = require("./routes/resourceRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
-// Mount folder-specific routes under /api/problems
 app.use("/api/folders", folderRoutes);
 app.use("/api/resources", resourceRoutes);
-// User-related APIs
+// User
 app.use("/api/users", userRoutes);
-// Create HTTP server
+
+
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api/chat-history", chatRoutes);
-// example in Express
+
+
 app.get("/health", (req, res) => {
   res.status(200).send("ok");
 });
 const server = http.createServer(app);
 
-// SOCKET.IO SETUP
 const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL,
@@ -55,9 +53,7 @@ const io = new Server(server, {
   },
 });
 
-// ===========================
-// 🔥 SOCKET EVENTS
-// ===========================
+
 io.on("connection", (socket) => {
   // Join user's personal room
   socket.on("join", ({ userId }) => {
@@ -71,7 +67,6 @@ io.on("connection", (socket) => {
     console.log(`Joined room: ${roomId}`);
   });
 
-  // Sending a message
   socket.on("send_message", async ({ sender, receiver, content, roomId }) => {
     if (!sender || !receiver || !content || !roomId) {
       console.warn("Missing required fields in message");
@@ -108,14 +103,12 @@ io.on("connection", (socket) => {
       // Send notification to receiver
       io.to(receiver).emit("new_chat_message", msgData);
 
-      // Live chat update to room
       io.to(roomId).emit("receive_message", msgData);
     } catch (error) {
       console.error("Error saving message:", error);
     }
   });
 
-  // Marking messages as seen
   socket.on("messages_seen", async ({ senderId, receiverId }) => {
     try {
       await Message.updateMany(

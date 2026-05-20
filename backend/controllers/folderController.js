@@ -1,6 +1,7 @@
 const Folder = require("../models/Folder");
 const Bookmark = require("../models/Bookmark");
 const uploadToS3 = require("../utils/s3Upload");
+const crypto = require("crypto");
 
 exports.createFolder = async (req, res) => {
   try {
@@ -291,6 +292,74 @@ exports.removeBookmarkFromFolder = async (req, res) => {
     });
 
     return res.status(200).json({ message: "Bookmark removed successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Make folder public by generating a share token
+exports.createShare = async (req, res) => {
+  try {
+    const { folderId } = req.params;
+    const userId = req.user.id;
+
+    const folder = await Folder.findOne({ _id: folderId, user: userId });
+    if (!folder) return res.status(404).json({ message: "Folder not found" });
+
+    if (!folder.shareToken) {
+      folder.shareToken = crypto.randomBytes(8).toString("hex");
+    }
+    folder.isPublic = true;
+    await folder.save();
+
+    const frontend = process.env.FRONTEND_URL || null;
+    const shareUrl = frontend
+      ? `${frontend.replace(/\/$/, "")}/shared/folder/${folder.shareToken}`
+      : null;
+
+    return res.status(200).json({ token: folder.shareToken, shareUrl });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Revoke public access
+exports.revokeShare = async (req, res) => {
+  try {
+    const { folderId } = req.params;
+    const userId = req.user.id;
+
+    const folder = await Folder.findOne({ _id: folderId, user: userId });
+    if (!folder) return res.status(404).json({ message: "Folder not found" });
+
+    folder.isPublic = false;
+    folder.shareToken = null;
+    await folder.save();
+
+    return res.status(200).json({ message: "Share revoked" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server Error", error: error.message });
+  }
+};
+
+// Public access by token (no auth)
+exports.getSharedFolderByToken = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const folder = await Folder.findOne({ shareToken: token, isPublic: true })
+      .populate({ path: "bookmarks", options: { sort: { createdAt: -1 } } })
+      .populate({ path: "resources" })
+      .populate({ path: "user", select: "username" });
+    if (!folder)
+      return res.status(404).json({ message: "Shared folder not found" });
+
+    return res.status(200).json(folder);
   } catch (error) {
     return res
       .status(500)

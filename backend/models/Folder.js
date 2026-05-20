@@ -22,8 +22,18 @@ const folderSchema = new mongoose.Schema(
       },
     ],
     resources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
+    // Sharing
+    isPublic: {
+      type: Boolean,
+      default: false,
+    },
+    shareToken: {
+      type: String,
+      default: null,
+      index: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Folder", folderSchema);

@@ -10,6 +10,9 @@ const {
   getBookmarksInFolder,
   removeBookmarkFromFolder,
   updateBookmarkInFolder,
+  createShare,
+  revokeShare,
+  getSharedFolderByToken,
 } = require("../controllers/folderController");
 const protect = require("../middleware/authmiddleware");
 const upload = require("../utils/upload");
@@ -45,5 +48,12 @@ router.delete(
   protect,
   removeBookmarkFromFolder,
 );
+
+// Share endpoints (minimal)
+router.post("/:folderId/share", protect, createShare);
+router.post("/:folderId/unshare", protect, revokeShare);
+
+// Public access by token
+router.get("/public/:token", getSharedFolderByToken);
 
 module.exports = router;

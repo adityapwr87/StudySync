@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "./components/Home/Home";
@@ -9,17 +10,46 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import Problems from "./components/Problems/Problems";
 import MyBookmarks from "./components/MyBookmarks/MyBookmarks";
 import Folder from "./components/MyBookmarks/Folder";
+import SharedFolderView from "./components/MyBookmarks/SharedFolderView";
 import Calendar from "./components/Calendar/Calendar";
 import Profile from "./components/Profile/Profile";
 import UserProfile from "./components/Profile/UserProfile";
 import ChatHistory from "./components/ChatHistory/ChatHistory";
 import Chat from "./components/Chat/Chat";
+import { getMyProfile } from "./api/api";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
-  const isLoggedIn = !!localStorage.getItem("token");
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setAuthChecked(true);
+      return;
+    }
+
+    getMyProfile()
+      .then(() => {
+        setIsLoggedIn(true);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setIsLoggedIn(false);
+      })
+      .finally(() => {
+        setAuthChecked(true);
+      });
+  }, []);
+
+  if (!authChecked) {
+    return null;
+  }
 
   return (
     <BrowserRouter>
@@ -31,18 +61,8 @@ export default function App() {
         />
 
         {/* ---------- AUTH ROUTES ---------- */}
-        <Route
-          path="/login"
-          element={
-           <LoginPage />
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <SignupPage />
-          }
-        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
         {/* ---------- PROTECTED ROUTES ---------- */}
         <Route
@@ -80,6 +100,9 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Public shared folder view (no auth) */}
+        <Route path="/shared/folder/:token" element={<SharedFolderView />} />
 
         <Route
           path="/calendar"
@@ -123,9 +146,7 @@ export default function App() {
         {/* ---------- FALLBACK ---------- */}
         <Route
           path="*"
-          element={
-            <Navigate to={isLoggedIn ? "/dashboard" : "/login"} replace />
-          }
+          element={<Navigate to={isLoggedIn ? "/dashboard" : "/"} replace />}
         />
       </Routes>
 

@@ -8,7 +8,13 @@ import {
   FiImage,
 } from "react-icons/fi";
 
-const ProblemCardBookmark = ({ data, onRemove, onEdit, isRemoving }) => {
+const ProblemCardBookmark = ({
+  data,
+  onRemove,
+  onEdit,
+  isRemoving,
+  readOnly = false,
+}) => {
   const [showSolution, setShowSolution] = useState(false);
   const [showImage, setShowImage] = useState(false);
 
@@ -18,23 +24,25 @@ const ProblemCardBookmark = ({ data, onRemove, onEdit, isRemoving }) => {
       <div className="card-top">
         <h3 className="prob-title">{data.title}</h3>
 
-        <div className="card-actions-top">
-          {/* ✅ Edit Button */}
-          <button
-            className="btn-icon edit"
-            onClick={() => onEdit(data)} // Pass full data to parent
-          >
-            <FiEdit2 />
-          </button>
+        {!readOnly && (
+          <div className="card-actions-top">
+            {/* ✅ Edit Button */}
+            <button
+              className="btn-icon edit"
+              onClick={() => onEdit(data)} // Pass full data to parent
+            >
+              <FiEdit2 />
+            </button>
 
-          <button
-            className="btn-icon delete"
-            onClick={() => onRemove(data._id)}
-            disabled={isRemoving}
-          >
-            <FiTrash2 />
-          </button>
-        </div>
+            <button
+              className="btn-icon delete"
+              onClick={() => onRemove(data._id)}
+              disabled={isRemoving}
+            >
+              <FiTrash2 />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Tags */}

@@ -1,19 +1,98 @@
-import React, { useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { login } from "../../api/api"; // Import from your api.js
+import { googleAuth, login } from "../../api/api";
+import { ensureGoogleIdentityLoaded } from "../../utils/googleIdentity";
 import "../../App.css";
 import "./LoginPage.css";
 import Navbar from "../Home/Navbar";
 import Footer from "../Dashboard/Footer/Footer";
+
+const GOOGLE_LOGIN_BUTTON_ID = "google-login-signin-button";
+
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  useEffect(() => {
+    if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
+      setError("Google sign-in is not configured");
+      return undefined;
+    }
+
+    let active = true;
+
+    const initGoogleButton = async () => {
+      try {
+        await ensureGoogleIdentityLoaded();
+
+        if (!active) {
+          return;
+        }
+
+        const buttonContainer = document.getElementById(GOOGLE_LOGIN_BUTTON_ID);
+        if (!buttonContainer) {
+          return;
+        }
+
+        window.google.accounts.id.initialize({
+          client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+          callback: async (response) => {
+            setGoogleLoading(true);
+            setError("");
+            try {
+              const { data } = await googleAuth(response.credential);
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+              if (window.chrome?.storage) {
+                chrome.storage.local.set({ codekeeper_token: data.token });
+              }
+              navigate("/dashboard");
+              toast.success("Logged in with Google!", {
+                position: "top-right",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+              });
+            } catch (err) {
+              setError(err.response?.data?.message || "Google sign-in failed");
+            } finally {
+              setGoogleLoading(false);
+            }
+          },
+        });
+
+        buttonContainer.innerHTML = "";
+        window.google.accounts.id.renderButton(buttonContainer, {
+          theme: "outline",
+          size: "large",
+          width: 320,
+          text: "signin_with",
+          shape: "rectangular",
+        });
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setError("Google sign-in is temporarily unavailable");
+      }
+    };
+
+    initGoogleButton();
+
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,9 +119,8 @@ const Login = () => {
       });
     } catch (err) {
       setError(err.response?.data?.error || "Invalid credentials");
-    }
-    finally {
-       setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +188,21 @@ const Login = () => {
               {loading ? <span className="loader"></span> : "Log In"}
             </button>
           </form>
+
+          <div className="auth-divider">or</div>
+
+          <div className="google-signin-shell">
+            {googleLoading ? (
+              <button type="button" className="google-auth-button" disabled>
+                Connecting...
+              </button>
+            ) : (
+              <div
+                id={GOOGLE_LOGIN_BUTTON_ID}
+                className="google-signin-button"
+              ></div>
+            )}
+          </div>
 
           <div className="auth-footer">
             Don't have an account?{" "}
