@@ -1,4 +1,4 @@
-# 🚀 CodeKeeper
+# 🚀 StudySync
 
 > **A full-stack ecosystem and Chrome Extension for extracting, organizing, and collaborating on competitive coding problems.**
 

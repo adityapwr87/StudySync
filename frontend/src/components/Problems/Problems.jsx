@@ -192,9 +192,7 @@ const Problems = () => {
   );
 };
 
-// --- UPDATED PROBLEM CARD WITH DISCUSSION ---
-// --- UPDATED PROBLEM CARD ---
-// --- UPDATED PROBLEM CARD ---
+
 const ProblemCard = ({ data }) => {
   const [showSolution, setShowSolution] = useState(false);
   const [showDiscussion, setShowDiscussion] = useState(false);
@@ -210,7 +208,6 @@ const ProblemCard = ({ data }) => {
   const [commentText, setCommentText] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // --- HANDLE ADD BOOKMARK ---
 
   // Handle Post Comment
   const handlePostComment = async (e) => {
