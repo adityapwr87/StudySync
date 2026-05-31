@@ -5,7 +5,7 @@ import {
   FiUploadCloud,
   FiBookmark,
   FiCalendar,
-  FiPieChart,
+  FiShare2,
 } from "react-icons/fi";
 import "./MainSection.css";
 
@@ -21,7 +21,7 @@ const MainSection = () => {
           at One Place
         </h1>
         <p className="hero-text">
-          Welcome to <span className="brand">CodeKeeper</span>, Stop scattering
+          Welcome to <span className="brand">StudySync</span>, Stop scattering
           your prep across different sites.
           <span className="line-break"></span>
           Save coding problems, upload your notes, and manage your study
@@ -70,10 +70,10 @@ const MainSection = () => {
             desc="Users can view upcoming contests from LeetCode, Codeforces, and more in a single view."
           />
           <FeatureCard
-            icon={<FiPieChart />}
+            icon={<FiShare2 />}
             color="purple"
-            title="Analytics Dashboard"
-            desc="Gain valuable insights into user interactions and track your daily problem-solving streak."
+            title="Sharable Folders"
+            desc="Create folders of saved problems and share them with other users for collaborative practice."
           />
         </div>
       </section>

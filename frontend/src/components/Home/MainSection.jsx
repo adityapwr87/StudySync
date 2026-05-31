@@ -5,13 +5,13 @@ import {
   FiUploadCloud,
   FiBookmark,
   FiCalendar,
-  FiPieChart,
+  FiShare2,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import "./MainSection.css";
 
 const MainSection = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <main>
       {/* --- HERO PART --- */}
@@ -70,10 +70,10 @@ const MainSection = () => {
             desc="Users can view upcoming contests from LeetCode, Codeforces, and more in a single view."
           />
           <FeatureCard
-            icon={<FiPieChart />}
+            icon={<FiShare2 />}
             color="purple"
-            title="Analytics Dashboard"
-            desc="Gain valuable insights into user interactions and track your daily problem-solving streak."
+            title="Sharable Folders"
+            desc="Create folders of saved problems and share them with other users for collaborative practice."
           />
         </div>
       </section>

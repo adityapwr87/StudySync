@@ -19,11 +19,51 @@ const Footer = () => {
             <FiLayers className="heading-icon color-1" /> Resources
           </h4>
           <ul className="footer-links">
-            <li><a href="#">Getting Started</a></li>
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">Tutorials</a></li>
-            <li><a href="#">API Reference</a></li>
-            <li><a href="#">Community Forums</a></li>
+            <li>
+              <a
+                href="https://github.com/adityapwr87/StudySync.git"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Getting Started
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/adityapwr87/StudySync.git"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Documentation
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/adityapwr87/StudySync.git"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Tutorials
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/adityapwr87/StudySync.git"
+                target="_blank"
+                rel="noreferrer"
+              >
+                API Reference
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/adityapwr87/StudySync.git"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Community Forums
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -34,7 +74,11 @@ const Footer = () => {
           </h4>
           <ul className="footer-links">
             <li className="platform-link cf">
-              <a href="https://codeforces.com/" target="_blank" rel="noreferrer">
+              <a
+                href="https://codeforces.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiCodeforces className="brand-icon" /> Codeforces
                 <FiExternalLink className="link-arrow" />
               </a>
@@ -48,7 +92,11 @@ const Footer = () => {
             </li>
 
             <li className="platform-link gfg">
-              <a href="https://www.geeksforgeeks.org/" target="_blank" rel="noreferrer">
+              <a
+                href="https://www.geeksforgeeks.org/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiGeeksforgeeks className="brand-icon" /> Geeks for Geeks
                 <FiExternalLink className="link-arrow" />
               </a>
@@ -62,7 +110,11 @@ const Footer = () => {
             </li>
 
             <li className="platform-link cc">
-              <a href="https://www.codechef.com/" target="_blank" rel="noreferrer">
+              <a
+                href="https://www.codechef.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
                 <SiCodechef className="brand-icon" /> Codechef
                 <FiExternalLink className="link-arrow" />
               </a>
@@ -76,11 +128,21 @@ const Footer = () => {
             <FiUsers className="heading-icon color-3" /> Community
           </h4>
           <ul className="footer-links">
-            <li><a href="#">Events</a></li>
-            <li><a href="#">Meetups</a></li>
-            <li><a href="#">Conferences</a></li>
-            <li><a href="#">Hackathons</a></li>
-            <li><a href="#">Jobs</a></li>
+            <li>
+              <a href="#">Events</a>
+            </li>
+            <li>
+              <a href="#">Meetups</a>
+            </li>
+            <li>
+              <a href="#">Conferences</a>
+            </li>
+            <li>
+              <a href="#">Hackathons</a>
+            </li>
+            <li>
+              <a href="#">Jobs</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -88,7 +150,6 @@ const Footer = () => {
       {/* FOOTER BOTTOM (Matches your Image) */}
       <div className="footer-bottom">
         <div className="footer-bottom-container">
-          
           {/* Left: Brand Identity */}
           <div className="footer-brand-area">
             <div className="brand-circle">B</div>
@@ -100,10 +161,12 @@ const Footer = () => {
 
           {/* Right: Copyright & Love */}
           <div className="footer-copyright-area">
-            <p>© 2025 BookMarker. Made with <FaHeart className="heart-icon" /> for developers</p>
+            <p>
+              © 2025 BookMarker. Made with <FaHeart className="heart-icon" />{" "}
+              for developers
+            </p>
             <span className="copyright-sub">Empowering coders worldwide</span>
           </div>
-
         </div>
       </div>
     </footer>

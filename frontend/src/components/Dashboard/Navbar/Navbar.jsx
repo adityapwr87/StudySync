@@ -24,7 +24,7 @@ const Navbar = () => {
         <div className="logo-icon">
           <span className="logo-symbol">📚</span>
         </div>
-        <span className="logo-text">CodeKeeper</span>
+        <span className="logo-text">StudySync</span>
       </div>
 
       {/* 2. CENTER: NAV LINKS */}

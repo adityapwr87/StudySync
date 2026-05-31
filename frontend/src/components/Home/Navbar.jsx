@@ -11,7 +11,7 @@ const Navbar = () => {
         {/* Logo / Branding */}
         <div className="navbar-brand" onClick={() => navigate("/")}>
           <span className="logo-icon">📚</span>
-          <h1>CodeKeeper</h1>
+          <h1>StudySync</h1>
         </div>
 
         {/* Navbar Actions */}
