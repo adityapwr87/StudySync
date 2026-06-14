@@ -22,6 +22,17 @@ const folderSchema = new mongoose.Schema(
       },
     ],
     resources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
+    parentFolder: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Folder",
+      default: null,
+    },
+    subfolders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Folder",
+      },
+    ],
     // Sharing
     isPublic: {
       type: Boolean,

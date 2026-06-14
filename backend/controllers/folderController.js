@@ -5,7 +5,7 @@ const crypto = require("crypto");
 
 exports.createFolder = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, parentFolderId } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: "Folder name is required" });
@@ -15,7 +15,16 @@ exports.createFolder = async (req, res) => {
       user: req.user.id,
       name,
       description,
+      parentFolder: parentFolderId || null,
     });
+
+    if (parentFolderId) {
+      const parentFolder = await Folder.findOne({ _id: parentFolderId, user: req.user.id });
+      if (parentFolder) {
+        parentFolder.subfolders.push(folder._id);
+        await parentFolder.save();
+      }
+    }
 
     return res.status(201).json(folder);
   } catch (error) {
@@ -27,7 +36,7 @@ exports.createFolder = async (req, res) => {
 
 exports.getFolders = async (req, res) => {
   try {
-    const folders = await Folder.find({ user: req.user.id }).sort({
+    const folders = await Folder.find({ user: req.user.id, parentFolder: null }).sort({
       createdAt: -1,
     });
 
@@ -44,10 +53,15 @@ exports.getFolderById = async (req, res) => {
     const folder = await Folder.findOne({
       _id: req.params.folderId,
       user: req.user.id,
-    }).populate({
-      path: "bookmarks",
-      options: { sort: { createdAt: -1 } },
-    });
+    })
+      .populate({
+        path: "bookmarks",
+        options: { sort: { createdAt: -1 } },
+      })
+      .populate({
+        path: "subfolders",
+        options: { sort: { createdAt: -1 } },
+      });
 
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
@@ -87,22 +101,38 @@ exports.renameFolder = async (req, res) => {
   }
 };
 
+const deleteFolderRecursively = async (folderId, userId) => {
+  const folder = await Folder.findOne({ _id: folderId, user: userId });
+  if (!folder) return;
+
+  if (folder.subfolders && folder.subfolders.length > 0) {
+    for (const subId of folder.subfolders) {
+      await deleteFolderRecursively(subId, userId);
+    }
+  }
+
+  await Bookmark.deleteMany({ folder: folderId, user: userId });
+  await Folder.deleteOne({ _id: folderId, user: userId });
+};
+
 exports.deleteFolder = async (req, res) => {
   try {
     const { folderId } = req.params;
     const userId = req.user.id;
 
-    // 1️⃣ Check ownership
     const folder = await Folder.findOne({ _id: folderId, user: userId });
     if (!folder) {
       return res.status(404).json({ message: "Folder not found" });
     }
 
-    // 2️⃣ Delete all bookmarks inside folder
-    await Bookmark.deleteMany({ folder: folderId, user: userId });
+    if (folder.parentFolder) {
+      await Folder.updateOne(
+        { _id: folder.parentFolder },
+        { $pull: { subfolders: folderId } }
+      );
+    }
 
-    // 3️⃣ Delete folder
-    await Folder.deleteOne({ _id: folderId, user: userId });
+    await deleteFolderRecursively(folderId, userId);
 
     return res.status(200).json({ message: "Folder deleted successfully" });
   } catch (error) {
