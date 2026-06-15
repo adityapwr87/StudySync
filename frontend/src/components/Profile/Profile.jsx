@@ -96,10 +96,9 @@ const Profile = () => {
   };
 
   const handleLogout = () => {  
-      
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/");
+    window.location.href = "/"; // Force page reload to clear state and go to home page
     toast.success("Logged out successfully!", {
       position: "top-right",
       autoClose: 2000,

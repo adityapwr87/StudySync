@@ -122,7 +122,7 @@ const Signup = () => {
         draggable: true,
       });
     } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
+      setError(err.response?.data?.message || err.response?.data?.error || "Something went wrong");
     } finally {
       setLoading(false);
     }

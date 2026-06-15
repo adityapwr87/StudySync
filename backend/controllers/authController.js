@@ -17,6 +17,10 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ message: "Password is required" });
     }
 
+    if (/\s/.test(username)) {
+      return res.status(400).json({ message: "Username cannot contain spaces." });
+    }
+
     // 1. Check if Username is already taken
     const usernameExists = await User.findOne({ username });
     if (usernameExists) {
